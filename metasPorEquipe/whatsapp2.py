@@ -34,6 +34,30 @@ import math
 
 
 # =============================================================================
+# FUNÇÃO AUXILIAR: GERAR BARRA DE PROGRESSO EMOCIONAL
+# =============================================================================
+def barra_progresso(percentual, tamanho=10):
+    try:
+        p = float(percentual)
+    except:
+        return ""
+
+    preenchido = int((p / 100) * tamanho)
+    vazio = tamanho - preenchido
+
+    if p >= 100:
+        cheio = "🟦"
+    elif p >= 70:
+        cheio = "🟩"
+    else:
+        cheio = "🟨"
+
+    barra = cheio * preenchido + "⬜" * vazio
+    return f"{barra} {p:.0f}%"
+
+
+
+# =============================================================================
 # PARTE 1: PEGAR OS DADOS DO SISTEMA
 # =============================================================================
 
@@ -64,8 +88,6 @@ def buscar_dados_metas():
 # =============================================================================
 # PARTE 2: TRANSFORMAR DADOS EM MENSAGEM BONITA
 # =============================================================================
-
-
 
 def criar_relatorio(dados):
     """
@@ -123,6 +145,7 @@ def criar_relatorio(dados):
     # --- CABEÇALHO COM TOTAIS ---
     total_vidas = int(dados['Vidas APH'].sum())
     total_meta_raw = dados['Meta'].sum()
+    barra = barra_progresso((total_vidas / total_meta_raw * 100) if total_meta_raw > 0 else 0)
 
     if math.isnan(float(total_meta_raw)):
         total_meta_txt = "—"
@@ -148,15 +171,20 @@ def criar_relatorio(dados):
     mensagem.append(f"🎯 Meta: {total_meta_txt}")
     mensagem.append(f"🎯 Progresso: {progresso_geral}\n")
     mensagem.append(f"📈 Atingido: {percentual_texto}")
+    mensagem.append(barra)
     mensagem.append("")
     mensagem.append("━━━━━━━━━━━━━━━━━━")
 
-    # --- DADOS DE CADA EQUIPE ---
+   # --- DADOS DE CADA EQUIPE ---
     for _, equipe in dados.iterrows():
         vidas_txt = fmt_vidas(equipe['Vidas APH'])
         meta_txt  = fmt_vidas(equipe['Meta'])
         progresso = fmt_progresso(equipe['Meta'], equipe['Vidas APH'])
         perc_txt  = fmt_percentual(equipe['% da Meta'], equipe['Meta'], equipe['Vidas APH'])
+
+        barra = barra_progresso(
+    (equipe['Vidas APH'] / equipe['Meta'] * 100) if equipe['Meta'] > 0 else 0
+)
 
         mensagem.append(
             f"🏷️ *{equipe['EQUIPE']}*\n"
@@ -164,6 +192,7 @@ def criar_relatorio(dados):
             f"   🎯 Meta: {meta_txt}\n"
             f"   🎯 Progresso: {progresso}\n"
             f"   📈 Atingido: {perc_txt}\n"
+            f"   {barra}\n"
         )
 
     # --- RODAPÉ MOTIVACIONAL ---

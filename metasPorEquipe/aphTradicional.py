@@ -21,15 +21,15 @@ class SistemaAcompanhamentoMetas:
         # 🔴 CONFIGURAÇÃO AUTOMÁTICA DE PERÍODO (26 a 25)
         # ============================================================
         hoje = pd.Timestamp.today().normalize()
-        self.DATA_INICIO = pd.Timestamp('2026-02-26')
-        self.DATA_FIM = pd.Timestamp('2026-03-30')    # Configuração fixa para testes
+        ##self.DATA_INICIO = pd.Timestamp('2026-02-26')
+        ##self.DATA_FIM = pd.Timestamp('2026-03-30')    # Configuração fixa para testes
 
-        ##if hoje.day >= 26:
-        ##    self.DATA_INICIO = hoje.replace(day=26)
-        ##    self.DATA_FIM = (self.DATA_INICIO + pd.DateOffset(months=1)).replace(day=25)
-        ##else:
-        ##    self.DATA_FIM = hoje.replace(day=25)
-        ##    self.DATA_INICIO = (self.DATA_FIM - pd.DateOffset(months=1)).replace(day=26)
+        if hoje.day >= 26:
+            self.DATA_INICIO = hoje.replace(day=26)
+            self.DATA_FIM = (self.DATA_INICIO + pd.DateOffset(months=1)).replace(day=25)
+        else:
+            self.DATA_FIM = hoje.replace(day=25)
+            self.DATA_INICIO = (self.DATA_FIM - pd.DateOffset(months=1)).replace(day=26)
 
         self.DATA_FIM = hoje  # DataFim sempre é hoje
         print("Data início:", self.DATA_INICIO.strftime("%d/%m/%Y"))
@@ -317,7 +317,7 @@ class SistemaAcompanhamentoMetas:
         # 2. Carrega bases
         self.carregar_bases()
 
-        self.diagnosticar_vendedor(937000)
+        
         
         # 3. Processa metas
         metas_final = self.processar_metas()
