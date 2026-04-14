@@ -1,0 +1,30 @@
+
+-- ============================================================
+-- COMO USAR OS SCORES NO POWER BI
+-- ============================================================
+-- 1. No Power Query (Power BI Desktop):
+--    Home > Obter Dados > CSV > selecione "lead_scores_vitalmed.csv"
+--    Renomeie a tabela para: ScoreLeads
+--
+-- 2. Crie o relacionamento:
+--    fLEADS[lead_id]  →  ScoreLeads[lead_id]  (muitos-para-um)
+--
+-- 3. Use esta medida DAX para exibir o score no cartão/tabela:
+
+Score Conversão =
+VAR _score = RELATED(ScoreLeads[score_conversao])
+RETURN
+    IF(ISBLANK(_score), "—", FORMAT(_score, "0.0") & " pts")
+
+-- 4. Medida de cor para semáforo (formatação condicional):
+
+Cor Score =
+VAR _s = RELATED(ScoreLeads[score_conversao])
+RETURN
+    SWITCH(
+        TRUE(),
+        _s >= 76, "#1D9E75",   -- Verde: Hot
+        _s >= 51, "#378ADD",   -- Azul: Quente
+        _s >= 26, "#EF9F27",   -- Laranja: Morno
+        "#D85A30"               -- Vermelho: Frio
+    )

@@ -95,7 +95,7 @@ if clicar_imagem(IMG_ENTRAR, confidence=0.9):
             log("Procurando conta comercial...")
             if clicar_imagem(IMG_COMERCIAL, timeout=30):
                 log("Login finalizado com sucesso ✅")
-                time.sleep(5)
+                time.sleep(7)
                 if clicar_imagem(IMG_FECHAR, timeout=30):
                     log("Fechou janela de sucesso")
                 else:
